@@ -2,3 +2,4 @@
 extra_packages:
   - git
   - rsync
+  - nfs-common
