@@ -49,57 +49,59 @@
     state: started
     enabled: yes
 
-# - name: Get a list of containers
-#   delegate_to: localhost
-#   become: no
-#   find:
-#     paths:
-#       - "roles/containers"
-#     file_type: directory
-#     recurse: no
-#   register: containers
+- name: Get a list of containers
+  delegate_to: localhost
+  become: no
+  find:
+    paths:
+      - "roles/containers"
+    file_type: directory
+    recurse: no
+  register: containers
 
-# - name: Stop and remove all the disabled containers
-#   docker_container:
-#     name: "{{ item.path.split('/')[-1] }}"
-#     state: absent
-#   when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
-#   with_items: "{{ containers.files }}"
+- name: Stop and remove all the disabled containers
+  docker_container:
+    name: "{{ item.path.split('/')[-1] }}"
+    state: absent
+  when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
+  with_items: "{{ containers.files }}"
 
-# - name: Handle persistent data
-#   when: "'fragile' in inventory_hostname"
-#   block:
-#   - name: Check if the persistent data folder exists on the remote machine
-#     stat:
-#       path: "{{ docker_dir }}"
-#     register: persistent_data
+- name: Handle persistent data
+  when: "'hjordis' in inventory_hostname"
+  block:
+  - name: Check if the persistent data folder exists on the remote machine
+    stat:
+      path: "{{ docker_dir }}"
+    register: persistent_data
 
-#   - name: Check if the persistent data folder is empty
-#     when: "'fragile' in inventory_hostname"
-#     find:
-#       paths:
-#         - "{{ docker_dir }}/"
-#       recurse: yes
-#     register: persistent_data_find
+  - name: Check if the persistent data folder is empty
+    when: "'hjordis' in inventory_hostname and persistent_data.stat.exists"
+    find:
+      paths:
+        - "{{ docker_dir }}/"
+      recurse: yes
+    register: persistent_data_find
 
-#   - name: Create the persistent data folder on the remote machine
-#     file:
-#       dest: "{{ docker_dir }}"
-#       state: directory
-#       owner: "{{ username }}"
-#       group: "{{ username }}"
-#       recurse: yes
-#     when: persistent_data.stat.exists == false
+  - name: Create the persistent data folder on the remote machine
+    file:
+      dest: "{{ docker_dir }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      recurse: yes
+    when: not persistent_data.stat.exists
 
-#   - name: Restore the "{{ docker_dir }}" folder from the MergerFS array
-#     shell:
-#       cmd: "rsync -avz --delete {{ mergerfs_root }}/docker_data/data/ {{ docker_dir }}/"
-#     when: persistent_data_find.matched < 20 or persistent_data.stat.exists == false
+  - name: Restore the "{{ docker_dir }}" folder from the NFS mount
+    synchronize:
+      src: /mnt/docker/data
+      dest: "{{ docker_dir }}/.."
+      delete: yes
+    delegate_to: "{{ inventory_hostname }}"
 
-#   - name: Chmod the data folder
-#     file:
-#       dest: "{{ docker_dir }}"
-#       state: directory
-#       owner: "{{ username }}"
-#       group: "{{ username }}"
-#       recurse: yes
+  - name: Chmod the data folder
+    file:
+      dest: "{{ docker_dir }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "docker"
+      recurse: yes
