@@ -13,3 +13,9 @@
     - role: docker
       tags:
         - docker
+
+    - role: containers/mosquitto
+      tags:
+        - mosquitto
+        - containers
+      when: enable_mosquitto | default(False)

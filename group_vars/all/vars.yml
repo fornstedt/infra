@@ -19,10 +19,23 @@ keyboard_layout: sv
 
 username: yarrow
 
+guid: "1000"
+
 shell: /usr/bin/bash
 
+docker_dir: /opt/docker/data
+
 #
-# Copy the following lines to vault.yml and encript
+# Container settings
+#
+
+enable_mosquitto: true
+
+nfsmounts:
+- {  dest: "/mnt/docker", src: "172.31.3.100:/mnt/md0/docker" }
+
+#
+# Copy the following lines to vault.yml and encrypt
 # with: ansible-vault encrypt group_vars/all/vault.yml:
 #
 
