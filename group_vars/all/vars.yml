@@ -31,8 +31,14 @@ docker_dir: /opt/docker/data
 
 enable_mosquitto: true
 
-nfsmounts:
-- {  dest: "/mnt/docker", src: "172.31.3.100:/mnt/md0/docker" }
+#
+# Mount settings
+#
+
+nfs_server_ip: 172.31.3.100
+
+nfs_mounts:
+- {  dest: "/mnt/docker", src: "{{ nfs_server_ip }}:/mnt/md0/docker" }
 
 #
 # Copy the following lines to vault.yml and encrypt
