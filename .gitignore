@@ -1,3 +1,4 @@
 .DS_Store
 secret.yml
 /hosts
+vault.yml
