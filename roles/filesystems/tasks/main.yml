@@ -1,0 +1,16 @@
+---
+- name: Install extra packages
+  package:
+    name: "{{ filesystem_packages }}"
+    state: present
+
+- name: mount the nfsshare in client side
+  mount:
+    fstype: nfs
+    opts: defaults
+    dump: 0
+    passno: 0
+    state: mounted
+    src: "{{ item.src }}"
+    path: "{{ item.dest }}"
+  with_items: "{{ nfs_mounts }}"

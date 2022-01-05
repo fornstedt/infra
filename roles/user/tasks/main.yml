@@ -37,9 +37,9 @@
     name: "{{ username }}"
     shell: "{{ shell }}"
 
-- name: Set the correct ownership for the user's home folder
+- name: Set the correct ownership for the user's home folder (not using ansible.builtin.file because of idempotency)
   shell:
-    cmd: "chown -R {{ username }}:{{ username}} /home/{{ username }}"
+    cmd: "chown -R {{ username }}:{{ username }} /home/{{ username }}"
   register: chown_status
   changed_when: chown_status.stdout != ""
 
