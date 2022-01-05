@@ -19,6 +19,12 @@ keyboard_layout: sv
 
 username: yarrow
 
-#guid: "1000"
-
 shell: /usr/bin/bash
+
+#
+# Copy the following lines to vault.yml and encript
+# with: ansible-vault encrypt group_vars/all/vault.yml:
+#
+
+# password: ''
+# ssh_public_key: ''
