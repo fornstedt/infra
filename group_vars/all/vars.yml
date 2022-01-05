@@ -13,13 +13,11 @@ ntp_timezone: "{{ timezone }}"
 
 locale: sv_SE.UTF-8
 
-lan_network: "{{ '.'.join(ansible_default_ipv4.address.split('.')[0:3]) }}.0/24"
+# lan_network: "{{ '.'.join(ansible_default_ipv4.address.split('.')[0:3]) }}.0/24"
 
 keyboard_layout: sv
 
 username: yarrow
-
-guid: "1000"
 
 shell: /usr/bin/bash
 
@@ -28,6 +26,8 @@ docker_dir: /opt/docker/data
 #
 # Container settings
 #
+
+guid: "1000"
 
 enable_mosquitto: true
 

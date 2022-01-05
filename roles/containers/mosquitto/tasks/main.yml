@@ -8,6 +8,8 @@
     ports:
       - "1883:1883"
     env:
+      "PUID": "{{ guid }}"
+      "PGID": "{{ guid }}"
       "TZ": "{{ timezone }}"
     volumes:
       - "{{ docker_dir }}/{{ container_name }}:/mosquitto"
