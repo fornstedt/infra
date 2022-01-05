@@ -1,0 +1,15 @@
+- hosts: hjordis
+  become: yes
+
+  roles:
+    - role: essential
+      tags:
+        - essential
+
+    - role: user
+      tags:
+        - user
+
+    - role: docker
+      tags:
+        - docker

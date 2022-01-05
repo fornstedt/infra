@@ -1,0 +1,3 @@
+# Encrypt this file with: ansible-vault encrypt <path-to-file>
+password: ''
+ssh_public_key: ''

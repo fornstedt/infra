@@ -1,0 +1,52 @@
+---
+- name: Create a login user
+  user:
+    name: "{{ username  }}"
+    password: "{{ password | password_hash('sha512') }}"
+    groups:
+      - "{{ sudo_group }}"
+      - users
+    state: present
+    append: true
+    update_password: on_create
+
+- name: Ensure group "{{ username }}" exists
+  become: yes
+  group:
+    name: "{{ username }}"
+    state: present
+
+- name: Allow 'sudo' group to have passwordless sudo
+  become: yes
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%{{ sudo_group }}'
+    line: '%{{ sudo_group }} ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Copy the public SSH key
+  become: yes
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ ssh_public_key }}"
+
+- name: Set the default shell
+  user:
+    name: "{{ username }}"
+    shell: "{{ shell }}"
+
+- name: Set the correct ownership for the user's home folder
+  shell:
+    cmd: "chown -R {{ username }}:{{ username}} /home/{{ username }}"
+  register: chown_status
+  changed_when: chown_status.stdout != ""
+
+- name: Suppress login messages
+  file:
+    name: /home/{{ username }}/.hushlogin
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+    mode: 0644
