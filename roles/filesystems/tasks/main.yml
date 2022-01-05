@@ -4,7 +4,7 @@
     name: "{{ filesystem_packages }}"
     state: present
 
-- name: mount the nfsshare in client side
+- name: Mount NFS shares
   mount:
     fstype: nfs
     opts: defaults

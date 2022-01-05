@@ -1,0 +1,17 @@
+---
+- name: Make sure the InfluxDB container is created and running
+  docker_container:
+    name: "{{ container_name }}"
+    image: "influxdb"
+    pull: true
+    state: 'started'
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+    env:
+      "PUID": "{{ guid }}"
+      "PGID": "{{ guid }}"
+      "TZ": "{{ timezone }}"
+    volumes:
+      - "{{ docker_dir }}/{{ container_name }}:/var/lib/influxdb"
+    restart_policy: unless-stopped

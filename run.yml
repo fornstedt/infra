@@ -23,3 +23,9 @@
         - mosquitto
         - containers
       when: enable_mosquitto | default(False)
+
+    - role: containers/influxdb
+      tags:
+        - influxdb
+        - containers
+      when: enable_influxdb | default(False)

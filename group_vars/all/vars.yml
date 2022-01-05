@@ -30,6 +30,7 @@ docker_dir: /opt/docker/data
 guid: "1000"
 
 enable_mosquitto: true
+enable_influxdb: true
 
 #
 # Mount settings
