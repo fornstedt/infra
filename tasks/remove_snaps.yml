@@ -1,0 +1,37 @@
+---
+- name: Check for packages
+  package_facts:
+    manager: auto
+
+- name: Unmount the core* snaps
+  mount:
+    name: "/snap/core*"
+    state: unmounted
+  when: "'snapd' in ansible_facts.packages"
+
+- name: Remove the pre-installed snaps
+  snap:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - lxd
+    - core20
+    - snapd
+  ignore_errors: yes
+  when: "'snapd' in ansible_facts.packages"
+
+- name: Remove the snap package from apt
+  apt:
+    package: snapd
+    state: absent
+    purge: yes
+
+- name: Remove the snap folders
+  file:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - /home/{{ username }}/snap
+    - /var/snap
+    - /var/lib/snap
+  when: "'snapd' in ansible_facts.packages"
