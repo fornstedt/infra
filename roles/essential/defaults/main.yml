@@ -1,4 +1,6 @@
 ---
 extra_packages:
+  - fish
   - git
   - rsync
+  - stow

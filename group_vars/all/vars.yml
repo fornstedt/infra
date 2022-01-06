@@ -19,9 +19,11 @@ keyboard_layout: sv
 
 username: yarrow
 
-shell: /usr/bin/bash
+shell: /usr/bin/fish
 
 docker_dir: /opt/docker/data
+
+dotfiles_repo: https://github.com/fornstedt/dotfiles
 
 #
 # Container settings

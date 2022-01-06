@@ -32,10 +32,31 @@
     state: present
     key: "{{ ssh_public_key }}"
 
+- name: Clone the latest dotfiles repo
+  git:
+    repo: "{{ dotfiles_repo }}"
+    dest: /home/{{ username }}/.dotfiles
+    recursive: no
+    force: yes
+
+- name: Stow the dotfiles
+  shell: cd /home/{{ username }}/.dotfiles && stow -v */
+  register: stow_result
+  changed_when: stow_result.stdout != ""
+
 - name: Set the default shell
   user:
     name: "{{ username }}"
     shell: "{{ shell }}"
+
+- name: Disable fish greeting
+  lineinfile:
+    path: /home/{{ username }}/.config/fish/fish_variables
+    state: present
+    regexp: 'fish_greeting:.+'
+    line: 'SETUVAR fish_greeting:'
+  when: '"fish" in shell'
+  ignore_errors: true
 
 - name: Set the correct ownership for the user's home folder (not using ansible.builtin.file because of idempotency)
   shell:
