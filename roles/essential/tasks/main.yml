@@ -16,8 +16,9 @@
 
 - name: Update and upgrade apt packages (Debian and Ubuntu)
   when: ansible_os_family == 'Debian'
-  shell:
-    cmd: apt update && apt upgrade -y
+  apt:
+    update_cache: yes
+    upgrade: yes
 
 - name: Check if reboot required
   stat:
@@ -46,3 +47,20 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: Allow 'sudo' group to have passwordless sudo
+  become: yes
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%{{ sudo_group }}'
+    line: '%{{ sudo_group }} ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Disable SSH password authentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#(.*)PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  notify:
+   - Restart SSH daemon
