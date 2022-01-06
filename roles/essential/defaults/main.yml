@@ -2,5 +2,6 @@
 extra_packages:
   - fish
   - git
+  - neofetch
   - rsync
   - stow
