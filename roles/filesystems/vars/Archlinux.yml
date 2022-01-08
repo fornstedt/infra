@@ -1,0 +1,3 @@
+---
+filesystem_packages:
+  - nfs-utils

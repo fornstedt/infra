@@ -16,14 +16,14 @@
       tags:
         - user
 
-- hosts: hjordis
-  become: yes
-
-  roles:
     - role: filesystems
       tags:
         - filesystems
 
+- hosts: hjordis
+  become: yes
+
+  roles:
     - role: docker
       tags:
         - docker
