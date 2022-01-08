@@ -20,14 +20,14 @@
       tags:
         - filesystems
 
-- hosts: hjordis
-  become: yes
-
-  roles:
     - role: docker
       tags:
         - docker
 
+- hosts: hjordis
+  become: yes
+
+  roles:
     - role: containers/mosquitto
       tags:
         - mosquitto

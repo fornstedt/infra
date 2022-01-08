@@ -1,6 +1,6 @@
 ---
 - name: Include OS-specific variables
-  include_vars: "{{ ansible_facts['os_family'] }}.yml"
+  include_vars: "{{ ansible_os_family }}.yml"
 
 - name: Install required system packages
   package:
@@ -26,6 +26,12 @@
     update_cache: yes
     name: "{{ docker_packages }}"
     state: present
+
+- name: Install Docker (Arch)
+  when: ansible_facts['distribution'] == 'Archlinux'
+  package:
+    state: present
+    name: "docker"
 
 - name: Ensure group docker exists
   group:
