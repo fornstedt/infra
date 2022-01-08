@@ -25,6 +25,10 @@ docker_dir: /opt/docker/data
 
 dotfiles_repo: https://github.com/fornstedt/dotfiles
 
+ansible_python_interpreter: /usr/bin/python3
+
+sudo_group: sudo
+
 #
 # Container settings
 #

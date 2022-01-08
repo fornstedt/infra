@@ -1,34 +1,10 @@
 ---
-- name: Ubuntu specific tasks
-  become: yes
-  when: ansible_facts['distribution'] == 'Ubuntu'
-  block:
-  - name: Remove cloud-config to avoid boot delay
-    apt:
-      name: cloud-config
-      state: absent
+- include_tasks: "setup-{{ ansible_os_family }}.yml"
 
-- name: Generate the locale (Debian and Ubuntu)
-  when: ansible_os_family == 'Debian'
+- name: Generate the locale
   locale_gen:
     name: "{{ locale }}"
     state: present
-
-- name: Update and upgrade apt packages (Debian and Ubuntu)
-  when: ansible_os_family == 'Debian'
-  apt:
-    update_cache: yes
-    upgrade: yes
-
-- name: Check if reboot required
-  stat:
-    path: /var/run/reboot-required
-  register: reboot_required_file
-
-- name: Reboot if required
-  reboot:
-    msg: Rebooting due to a kernel update
-  when: reboot_required_file.stat.exists
 
 - name: Install extra packages
   package:

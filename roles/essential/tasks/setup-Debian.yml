@@ -1,0 +1,25 @@
+---
+- name: Ubuntu specific tasks
+  become: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  block:
+  - name: Remove cloud-config to avoid boot delay
+    apt:
+      name: cloud-config
+      state: absent
+
+- name: Update and upgrade apt packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Check if reboot required
+  when: ansible_os_family == 'Debian'
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+
+- name: Reboot if required
+  reboot:
+    msg: Rebooting due to a kernel update
+  when: reboot_required_file.stat.exists
