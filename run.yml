@@ -14,10 +14,6 @@
       tags:
         - docker
 
-- hosts: hjordis
-  become: yes
-
-  roles:
     - role: containers/mosquitto
       tags:
         - mosquitto

@@ -1,0 +1,5 @@
+#
+# Container settings
+#
+
+enable_pihole: true

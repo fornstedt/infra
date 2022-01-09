@@ -1,0 +1,6 @@
+#
+# Container settings
+#
+
+enable_mosquitto: true
+enable_influxdb: true

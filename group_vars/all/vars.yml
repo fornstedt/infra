@@ -13,8 +13,6 @@ ntp_timezone: "{{ timezone }}"
 
 locale: sv_SE.UTF-8
 
-# lan_network: "{{ '.'.join(ansible_default_ipv4.address.split('.')[0:3]) }}.0/24"
-
 keyboard_layout: sv
 
 username: yarrow
@@ -35,23 +33,23 @@ sudo_group: sudo
 
 guid: "1000"
 
-enable_mosquitto: true
-enable_influxdb: true
-
 #
 # Mount settings
 #
 
-nfs_server_ip: 172.31.3.100
-docker_mount: /mnt/docker
+nfs_server:   "{{ nfs_server_ip }}"
+nsf_docker:   "{{ nfs_raid_path }}/docker"
+docker_mount: "/mnt/docker"
 
 nfs_mounts:
-- {  dest: "{{ docker_mount }}", src: "{{ nfs_server_ip }}:/mnt/md0/docker" }
+- {  dest: "{{ docker_mount }}", src: "{{ nfs_server }}:{{ nsf_docker }}" }
 
 #
-# Copy the following lines to vault.yml and encrypt
-# with: ansible-vault encrypt group_vars/all/vault.yml:
+# Copy the following lines to secret.yml and encrypt
+# with: ansible-vault encrypt group_vars/all/secret.yml:
 #
 
 # password: ''
 # ssh_public_key: ''
+# nfs_server_ip: ''
+# nfs_raid_path: ''
