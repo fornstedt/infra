@@ -1,0 +1,4 @@
+- include_tasks: "setup-{{ ansible_os_family }}.yml"
+- include_tasks: essential.yml
+- include_tasks: remove_snaps.yml
+- include_tasks: user.yml

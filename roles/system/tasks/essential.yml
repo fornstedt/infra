@@ -1,6 +1,4 @@
 ---
-- include_tasks: "setup-{{ ansible_os_family }}.yml"
-
 - name: Generate the locale
   locale_gen:
     name: "{{ locale }}"

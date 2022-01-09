@@ -1,20 +1,10 @@
 - hosts: all
   become: yes
 
-  pre_tasks:
-    - name: Remove snap functionality
-      when: ansible_facts['distribution'] == 'Ubuntu'
-      import_tasks: tasks/remove_snaps.yml
-      tags: nosnaps
-
   roles:
-    - role: essential
+    - role: system
       tags:
-        - essential
-
-    - role: user
-      tags:
-        - user
+        - system
 
     - role: filesystems
       tags:

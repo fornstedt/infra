@@ -7,13 +7,4 @@
     name: "{{ filesystem_packages }}"
     state: present
 
-- name: Mount NFS shares
-  mount:
-    fstype: nfs
-    opts: defaults
-    dump: 0
-    passno: 0
-    state: mounted
-    src: "{{ item.src }}"
-    path: "{{ item.dest }}"
-  with_items: "{{ nfs_mounts }}"
+- include_tasks: nfs.yml
