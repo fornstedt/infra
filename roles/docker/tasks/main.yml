@@ -58,19 +58,32 @@
 - name: Get a list of containers
   delegate_to: localhost
   become: no
-  find:
-    paths:
-      - "roles/containers"
-    file_type: directory
-    recurse: no
-  register: containers
+  block:
+  - name: Get container folders
+    find:
+      paths:
+        - "roles/containers"
+      file_type: directory
+      recurse: no
+    register: container_folders
 
-# - name: Stop and remove all the disabled containers
-#   docker_container:
-#     name: "{{ item.path.split('/')[-1] }}"
-#     state: absent
-#   when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
-#   with_items: "{{ containers.files }}"
+  - name: Create empty container list
+    set_fact: containers="{{ [] }}"
+
+  - name: Filter out non-container folders
+    no_log: true
+    set_fact:
+      containers: "{{ containers + [item] }}"
+    with_items: "{{ container_folders.files }}"
+    when: '"tasks" not in item.path'
+
+- name: Stop and remove all the disabled containers
+  no_log: true
+  docker_container:
+    name: "{{ item.path.split('/')[-1] }}"
+    state: absent
+  when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
+  with_items: "{{ containers }}"
 
 - name: Prepare persistent data
   block:

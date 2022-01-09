@@ -3,3 +3,5 @@
 #
 
 enable_pihole: true
+enable_mosquitto: false
+enable_influxdb: false

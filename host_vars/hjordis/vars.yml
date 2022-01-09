@@ -2,5 +2,6 @@
 # Container settings
 #
 
+enable_pihole: false
 enable_mosquitto: true
 enable_influxdb: true
