@@ -1,0 +1,45 @@
+---
+- name: Handle persistent data
+  block:
+  - name: Check if the persistent data folder exists on the remote machine
+    stat:
+      path: "{{ docker_dir }}/{{ container_name }}"
+    register: local_persistent_data
+
+  - name: Check if the persistent data folder is empty
+    when: local_persistent_data.stat.exists
+    find:
+      paths:
+        - "{{ docker_dir }}//{{ container_name }}/"
+      recurse: yes
+    register: persistent_data_find
+
+  - name: Create the persistent data folder for {{ container_name }} on the remote machine
+    file:
+      dest: "{{ docker_dir }}//{{ container_name }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      recurse: yes
+    when: not local_persistent_data.stat.exists
+
+  - name: Check if the persistent data exists in NFS mount
+    stat:
+      path: "{{ docker_mount }}/data/{{ container_name }}"
+    register: external_persistent_data
+
+  - name: Restore the {{ docker_dir }}/{{ container_name }}/ folder from the NFS mount
+    when: external_persistent_data.stat.exists
+    synchronize:
+      src: "{{ docker_mount }}/data/{{ container_name }}"
+      dest: "{{ docker_dir }}/{{ container_name }}/.."
+      delete: yes
+    delegate_to: "{{ inventory_hostname }}"
+
+  - name: Chmod the data folder
+    file:
+      dest: "{{ docker_dir }}/{{ container_name }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "docker"
+      recurse: yes

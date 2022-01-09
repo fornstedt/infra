@@ -16,3 +16,5 @@
       - "{{ docker_dir }}/{{ container_name }}/data:/mosquitto/data"
       - "{{ docker_dir }}/{{ container_name }}/log:/mosquitto/log"
     restart_policy: unless-stopped
+
+- import_tasks: ../tasks/persistant-data.yml

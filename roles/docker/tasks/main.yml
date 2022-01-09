@@ -65,28 +65,19 @@
     recurse: no
   register: containers
 
-- name: Stop and remove all the disabled containers
-  docker_container:
-    name: "{{ item.path.split('/')[-1] }}"
-    state: absent
-  when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
-  with_items: "{{ containers.files }}"
+# - name: Stop and remove all the disabled containers
+#   docker_container:
+#     name: "{{ item.path.split('/')[-1] }}"
+#     state: absent
+#   when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
+#   with_items: "{{ containers.files }}"
 
-- name: Handle persistent data
-  when: "'hjordis' in inventory_hostname"
+- name: Prepare persistent data
   block:
   - name: Check if the persistent data folder exists on the remote machine
     stat:
       path: "{{ docker_dir }}"
     register: persistent_data
-
-  - name: Check if the persistent data folder is empty
-    when: "'hjordis' in inventory_hostname and persistent_data.stat.exists"
-    find:
-      paths:
-        - "{{ docker_dir }}/"
-      recurse: yes
-    register: persistent_data_find
 
   - name: Create the persistent data folder on the remote machine
     file:
@@ -96,13 +87,6 @@
       group: "{{ username }}"
       recurse: yes
     when: not persistent_data.stat.exists
-
-  - name: Restore the "{{ docker_dir }}" folder from the NFS mount
-    synchronize:
-      src: /mnt/docker/data
-      dest: "{{ docker_dir }}/.."
-      delete: yes
-    delegate_to: "{{ inventory_hostname }}"
 
   - name: Chmod the data folder
     file:

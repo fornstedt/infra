@@ -43,9 +43,10 @@ enable_influxdb: true
 #
 
 nfs_server_ip: 172.31.3.100
+docker_mount: /mnt/docker
 
 nfs_mounts:
-- {  dest: "/mnt/docker", src: "{{ nfs_server_ip }}:/mnt/md0/docker" }
+- {  dest: "{{ docker_mount }}", src: "{{ nfs_server_ip }}:/mnt/md0/docker" }
 
 #
 # Copy the following lines to vault.yml and encrypt
