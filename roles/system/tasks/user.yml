@@ -29,6 +29,7 @@
     dest: /home/{{ username }}/.dotfiles
     recursive: no
     force: yes
+    version: main
 
 - name: Stow the dotfiles
   shell: cd /home/{{ username }}/.dotfiles && stow -v */
