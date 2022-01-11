@@ -55,35 +55,17 @@
     state: started
     enabled: yes
 
-- name: Get a list of containers
-  delegate_to: localhost
-  become: no
-  block:
-  - name: Get container folders
-    find:
-      paths:
-        - "roles/containers"
-      file_type: directory
-      recurse: no
-    register: container_folders
+- name: Get a list of installed containers
+  command: docker ps --format "{{ '{{' }} .Names {{ '}}' }}"
+  changed_when: false
+  register: containers
 
-  - name: Create empty container list
-    set_fact: containers="{{ [] }}"
-
-  - name: Filter out non-container folders
-    no_log: true
-    set_fact:
-      containers: "{{ containers + [item] }}"
-    with_items: "{{ container_folders.files }}"
-    when: '"tasks" not in item.path'
-
-- name: Stop and remove all the disabled containers
-  no_log: true
+- name: Stop and remove all containers not selected for the host
   docker_container:
-    name: "{{ item.path.split('/')[-1] }}"
+    name: "{{ item }}"
     state: absent
-  when: not lookup('vars', 'enable_' + item.path.split('/')[-1])
-  with_items: "{{ containers }}"
+  with_items: "{{ containers.stdout_lines }}"
+  when: item not in selected_containers
 
 - name: Prepare persistent data
   block:

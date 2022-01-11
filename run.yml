@@ -14,14 +14,11 @@
       tags:
         - docker
 
-    - role: containers/mosquitto
-      tags:
-        - mosquitto
-        - containers
-      when: enable_mosquitto | default(False)
-
-    - role: containers/influxdb
-      tags:
-        - influxdb
-        - containers
-      when: enable_influxdb | default(False)
+  tasks:
+    - name: Install containers
+      include_role:
+        name: containers/{{ item }}
+        apply:
+          tags: containers
+      tags: containers
+      with_items: "{{ selected_containers }}"
