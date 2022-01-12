@@ -1,4 +1,7 @@
 ---
+- name: Include OS family packages
+  include_vars: "{{ ansible_os_family }}.yml"
+
 - name: Generate the locale
   locale_gen:
     name: "{{ locale }}"
@@ -6,7 +9,7 @@
 
 - name: Install extra packages
   package:
-    name: "{{ extra_packages }}"
+    name: "{{ extra_packages + arch_packages }}"
     state: present
 
 - name: Set the hostname
