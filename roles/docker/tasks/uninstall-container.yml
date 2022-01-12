@@ -1,0 +1,18 @@
+---
+- name: Stop and remove {{ item  }} container
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+
+- name: Check if the persistent data folder exists for {{ docker_dir }}/{{ item }}
+  stat:
+    path: "{{ docker_dir }}/{{ item }}"
+  register: local_persistent_data
+
+- name: Sync back the {{ docker_dir }}/{{ item }}/ folder to the NFS mount
+  when: local_persistent_data.stat.exists
+  synchronize:
+    src: "{{ docker_dir }}/{{ item }}"
+    dest: "{{ docker_mount }}/data"
+    delete: yes
+  delegate_to: "{{ inventory_hostname }}"

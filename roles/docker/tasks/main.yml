@@ -31,5 +31,13 @@
     state: started
     enabled: yes
 
-- include_tasks: uninstall-removed-containers.yml
+- name: Get a list of installed containers
+  command: docker ps --format "{{ '{{' }} .Names {{ '}}' }}"
+  changed_when: false
+  register: containers
+
+- include_tasks: uninstall-container.yml
+  with_items: "{{ containers.stdout_lines }}"
+  when: item not in selected_containers
+
 - include_tasks: prepare-persistant-data.yml
