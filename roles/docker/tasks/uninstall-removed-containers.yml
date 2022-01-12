@@ -1,0 +1,12 @@
+---
+- name: Get a list of installed containers
+  command: docker ps --format "{{ '{{' }} .Names {{ '}}' }}"
+  changed_when: false
+  register: containers
+
+- name: Stop and remove all containers not selected for the host
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ containers.stdout_lines }}"
+  when: item not in selected_containers

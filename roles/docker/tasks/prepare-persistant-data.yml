@@ -1,0 +1,24 @@
+---
+- name: Prepare persistent data
+  block:
+  - name: Check if the persistent data folder exists on the remote machine
+    stat:
+      path: "{{ docker_dir }}"
+    register: persistent_data
+
+  - name: Create the persistent data folder on the remote machine
+    file:
+      dest: "{{ docker_dir }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      recurse: yes
+    when: not persistent_data.stat.exists
+
+  - name: Chmod the data folder
+    file:
+      dest: "{{ docker_dir }}"
+      state: directory
+      owner: "{{ username }}"
+      group: "docker"
+      recurse: yes

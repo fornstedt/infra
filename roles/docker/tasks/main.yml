@@ -7,31 +7,7 @@
     state: present
     name: "{{ docker_deps }}"
 
-- name: Install Docker (Ubuntu)
-  when: ansible_facts['distribution'] == 'Ubuntu'
-  block:
-  - name: Add Docker GPG apt Key
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
-
-  - name: Add Docker Repository
-    apt_repository:
-      repo: deb https://download.docker.com/linux/ubuntu bionic stable
-      state: present
-
-- name: Update apt and install docker-ce
-  when: ansible_facts['os_family'] == 'Debian'
-  apt:
-    update_cache: yes
-    name: "{{ docker_packages }}"
-    state: present
-
-- name: Install Docker (Arch)
-  when: ansible_facts['distribution'] == 'Archlinux'
-  package:
-    state: present
-    name: "docker"
+- include_tasks: "install-{{ ansible_os_family }}.yml"
 
 - name: Ensure group docker exists
   group:
@@ -55,38 +31,5 @@
     state: started
     enabled: yes
 
-- name: Get a list of installed containers
-  command: docker ps --format "{{ '{{' }} .Names {{ '}}' }}"
-  changed_when: false
-  register: containers
-
-- name: Stop and remove all containers not selected for the host
-  docker_container:
-    name: "{{ item }}"
-    state: absent
-  with_items: "{{ containers.stdout_lines }}"
-  when: item not in selected_containers
-
-- name: Prepare persistent data
-  block:
-  - name: Check if the persistent data folder exists on the remote machine
-    stat:
-      path: "{{ docker_dir }}"
-    register: persistent_data
-
-  - name: Create the persistent data folder on the remote machine
-    file:
-      dest: "{{ docker_dir }}"
-      state: directory
-      owner: "{{ username }}"
-      group: "{{ username }}"
-      recurse: yes
-    when: not persistent_data.stat.exists
-
-  - name: Chmod the data folder
-    file:
-      dest: "{{ docker_dir }}"
-      state: directory
-      owner: "{{ username }}"
-      group: "docker"
-      recurse: yes
+- include_tasks: uninstall-removed-containers.yml
+- include_tasks: prepare-persistant-data.yml
