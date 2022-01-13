@@ -1,14 +1,17 @@
 #!/bin/bash
 
-container=$1
+containers=$@
 
-echo "Stopping container:"
-docker stop $container || exit 1
+echo "Stopping containers:"
+docker stop $containers || exit 1
+
+for container in "$@"
+do
+    echo
+    echo "Syncronize files: {{ docker_dir }}/$container/ -> {{ docker_mount }}/data/$container"
+    sudo rsync -avz {{ docker_dir }}/$container/ {{ docker_mount }}/data/$container
+done
 
 echo
-echo "Syncronize files: {{ docker_dir }}/$container/ -> {{ docker_mount }}/data/$container"
-sudo rsync -avz {{ docker_dir }}/$container/ {{ docker_mount }}/data/$container
-
-echo
-echo "Starting container:"
-docker start $container
+echo "Starting containers:"
+docker start $containers
