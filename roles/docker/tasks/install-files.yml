@@ -1,0 +1,8 @@
+---
+- name: Install container backup script
+  template:
+    src: container-backup.sh.j2
+    dest: /usr/local/sbin/container-backup.sh
+    owner: root
+    group: users
+    mode: 0774

@@ -41,3 +41,16 @@
   when: item not in selected_containers
 
 - include_tasks: prepare-persistant-data.yml
+- include_tasks: install-files.yml
+
+- name: Create container backup variable for cron
+  cron:
+    name: CONTAINER_BACKUP
+    env: yes
+    job: /usr/local/sbin/container-backup.sh
+
+- name: Create date format variable for cron
+  cron:
+    name: DATE_FORMAT
+    env: yes
+    job: "%Y%m%d_%H%M%S"

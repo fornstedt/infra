@@ -16,3 +16,8 @@
     dest: "{{ docker_mount }}/data"
     delete: yes
   delegate_to: "{{ inventory_hostname }}"
+
+- name: Remove cron backup job for {{ item }}
+  cron:
+    name: "container backup {{ item }}"
+    state: absent

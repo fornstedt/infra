@@ -17,3 +17,11 @@
     restart_policy: unless-stopped
 
 - import_tasks: ../tasks/persistant-data.yml
+
+- name: Create a cron backup job for {{ container_name }}
+  ansible.builtin.cron:
+    name: "container backup {{ container_name }}"
+    minute: "5"
+    hour: "3"
+    day: "5"
+    job: "$CONTAINER_BACKUP {{ container_name }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
