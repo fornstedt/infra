@@ -1,6 +1,24 @@
 ---
+- name: Copy file with owner and permissions
+  copy:
+    src: check-reboot.sh
+    dest: /usr/local/sbin/check-reboot.sh
+    owner: root
+    group: users
+    mode: '0774'
+
 - name: Update and upgrade apt packages
   when: ansible_os_family == 'Archlinux'
   pacman:
     update_cache: yes
     upgrade: yes
+
+- name: Check if boot is required
+  command: /usr/local/sbin/check-reboot.sh
+  register: reboot_required
+  changed_when: '"Reboot required" in reboot_required.stdout_lines'
+
+- name: Reboot if required
+  reboot:
+    msg: Rebooting due to a kernel update
+  when: '"Reboot required" in reboot_required.stdout_lines'
