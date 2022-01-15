@@ -1,0 +1,65 @@
+---
+- import_tasks: ../tasks/persistant-data.yml
+
+- name: Create the configuration directory
+  file:
+    path: "{{ item2 }}"
+    state: directory
+    owner: root
+    group: users
+    recurse: yes
+  loop_control:
+    loop_var: item2
+  with_items:
+    - "{{ docker_dir }}/{{ container_name }}/pihole/"
+    - "{{ docker_dir }}/{{ container_name }}/dnmasq-unbound/"
+    - "{{ docker_dir }}/{{ container_name }}/unbound.conf.d/"
+
+- name: Copy the unbound configuration file
+  template:
+    src: unbound.j2
+    dest: "{{ docker_dir }}/{{ container_name }}/unbound.conf.d/pi-hole.conf"
+    owner: root
+    group: users
+    mode: 0774
+
+- name: Make sure the {{ container_name }} container is created and running
+  docker_container:
+    name: "{{ container_name }}"
+    image: "cbcrowe/pihole-unbound"
+    privileged: yes
+    hostname: "{{ inventory_hostname }}"
+    # domainname: "{{ host }}"
+    pull: false
+    state: 'started'
+    env:
+      "ServerIP": "{{ ansible_default_ipv4.address }}"
+      "TZ": "{{ timezone }}"
+      "WEBPASSWORD": "{{ pihole_password }}"
+      "REV_SERVER": "true"
+      "REV_SERVER_TARGET": "{{ ansible_default_ipv4.gateway }}"
+      "REV_SERVER_DOMAIN": "box"
+      "REV_SERVER_CIDR": "{{ '.'.join(ansible_default_ipv4.address.split('.')[0:3]) }}.0/24"
+      "DNS1": "127.0.0.1#5335" # Hardcoded to our Unbound server
+      "DNS2": "127.0.0.1#5335" # Hardcoded to our Unbound server
+      "DNSSEC": "true" # Enable DNSSEC
+      "DOMAIN_NAME": "pihole.box"
+    volumes:
+      - "{{ docker_dir }}/{{ container_name }}/pihole:/etc/pihole"
+      - "{{ docker_dir }}/{{ container_name }}/dnmasq-unbound:/etc/dnsmasq.d"
+    ports:
+      - "443:443/tcp"
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80/tcp"
+      # - 5335:5335/tcp # Uncomment to enable unbound access on local server
+      # - 22/tcp # Uncomment to enable SSH
+    restart_policy: unless-stopped
+
+- name: Create a cron backup job for {{ container_name }}
+  ansible.builtin.cron:
+    name: "container backup {{ container_name }}"
+    minute: "0"
+    hour: "3"
+    weekday: "6"
+    job: "$CONTAINER_BACKUP {{ container_name }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
