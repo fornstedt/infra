@@ -1,5 +1,7 @@
 ---
-- name: Make sure the InfluxDB container is created and running
+- import_tasks: ../tasks/persistant-data.yml
+
+- name: Make sure the {{ container_name }} container is created and running
   docker_container:
     name: "{{ container_name }}"
     image: "influxdb"
@@ -16,12 +18,10 @@
       - "{{ docker_dir }}/{{ container_name }}:/var/lib/influxdb"
     restart_policy: unless-stopped
 
-- import_tasks: ../tasks/persistant-data.yml
-
 - name: Create a cron backup job for {{ container_name }}
   ansible.builtin.cron:
     name: "container backup {{ container_name }}"
     minute: "5"
     hour: "3"
-    day: "5"
+    weekday: "6"
     job: "$CONTAINER_BACKUP {{ container_name }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
