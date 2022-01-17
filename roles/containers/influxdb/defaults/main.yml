@@ -1,1 +1,4 @@
 container_name: influxdb
+
+dependent_containers:
+  - homeassistant

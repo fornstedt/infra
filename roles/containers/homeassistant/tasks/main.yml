@@ -1,0 +1,17 @@
+---
+- import_tasks: ../tasks/persistant-data.yml
+
+- name: Make sure the {{ container_name }} container is created and running
+  docker_container:
+    name: "{{ container_name }}"
+    image: "homeassistant/home-assistant:stable"
+    pull: yes
+    state: 'started'
+    network_mode: host
+    env:
+      "TZ": "{{ timezone }}"
+    volumes:
+      - "{{ docker_dir }}/{{ container_name }}:/config"
+    restart_policy: unless-stopped
+
+# backup is handled bu influxdb cron job.

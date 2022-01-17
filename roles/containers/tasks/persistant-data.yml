@@ -11,7 +11,6 @@
     find:
       paths:
         - "{{ docker_dir }}//{{ container_name }}/"
-      recurse: yes
     register: persistent_data_find
 
   - name: Create the persistent data folder for {{ container_name }} on the remote machine
@@ -29,7 +28,7 @@
     register: external_persistent_data
 
   - name: Restore the {{ docker_dir }}/{{ container_name }}/ folder from the NFS mount
-    when: external_persistent_data.stat.exists
+    when: external_persistent_data.stat.exists and persistent_data_find.matched == 0
     synchronize:
       src: "{{ docker_mount }}/data/{{ container_name }}"
       dest: "{{ docker_dir }}/{{ container_name }}/.."

@@ -1,6 +1,20 @@
 ---
 - import_tasks: ../tasks/persistant-data.yml
 
+- name: Create the configuration directory
+  file:
+    path: "{{ item2 }}"
+    state: directory
+    owner: root
+    group: users
+    recurse: yes
+  loop_control:
+    loop_var: item2
+  with_items:
+    - "{{ docker_dir }}/{{ container_name }}/root/.influxdbv2/"
+    - "{{ docker_dir }}/{{ container_name }}/etc/influxdb2/"
+    - "{{ docker_dir }}/{{ container_name }}/var/lib/influxdb2/"
+
 - name: Make sure the {{ container_name }} container is created and running
   docker_container:
     name: "{{ container_name }}"
@@ -8,14 +22,15 @@
     pull: true
     state: 'started'
     ports:
-      - "8083:8083"
       - "8086:8086"
     env:
       "PUID": "{{ guid }}"
       "PGID": "{{ guid }}"
       "TZ": "{{ timezone }}"
     volumes:
-      - "{{ docker_dir }}/{{ container_name }}:/var/lib/influxdb"
+      - "{{ docker_dir }}/{{ container_name }}/root/.influxdbv2:/root/.influxdbv2"
+      - "{{ docker_dir }}/{{ container_name }}/etc/influxdb2:/etc/influxdb2"
+      - "{{ docker_dir }}/{{ container_name }}/var/lib/influxdb2:/var/lib/influxdb2"
     restart_policy: unless-stopped
 
 - name: Create a cron backup job for {{ container_name }}
@@ -24,4 +39,4 @@
     minute: "5"
     hour: "3"
     weekday: "6"
-    job: "$CONTAINER_BACKUP {{ container_name }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
+    job: "$CONTAINER_BACKUP {{ ([container_name] + dependent_containers) | join(' ') }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
