@@ -40,6 +40,6 @@
     file:
       dest: "{{ docker_dir }}/{{ container_name }}"
       state: directory
-      owner: "{{ username }}"
-      group: "docker"
+      owner: root
+      group: users
       recurse: yes
