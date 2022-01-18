@@ -6,13 +6,6 @@
       path: "{{ docker_dir }}/{{ container_name }}"
     register: local_persistent_data
 
-  - name: Check if the persistent data folder is empty
-    when: local_persistent_data.stat.exists
-    find:
-      paths:
-        - "{{ docker_dir }}//{{ container_name }}/"
-    register: persistent_data_find
-
   - name: Create the persistent data folder for {{ container_name }} on the remote machine
     file:
       dest: "{{ docker_dir }}//{{ container_name }}"
@@ -21,6 +14,14 @@
       group: "{{ username }}"
       recurse: yes
     when: not local_persistent_data.stat.exists
+
+  - name: Check if the persistent data folder ({{ docker_dir }}/{{ container_name }}) is empty
+    when: local_persistent_data.stat.exists
+    find:
+      paths:
+        - "{{ docker_dir }}/{{ container_name }}/"
+      file_type: any
+    register: persistent_data_find
 
   - name: Check if the persistent data exists in NFS mount
     stat:
