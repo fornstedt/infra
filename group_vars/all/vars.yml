@@ -31,7 +31,7 @@ sudo_group: sudo
 # Container settings
 #
 
-guid: "1000"
+guid: "1001"
 
 #
 # Mount settings

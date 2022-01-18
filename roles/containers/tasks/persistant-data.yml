@@ -11,7 +11,7 @@
       dest: "{{ docker_dir }}//{{ container_name }}"
       state: directory
       owner: "{{ username }}"
-      group: "{{ username }}"
+      group: "users"
       recurse: yes
     when: not local_persistent_data.stat.exists
 
@@ -40,6 +40,6 @@
     file:
       dest: "{{ docker_dir }}/{{ container_name }}"
       state: directory
-      owner: root
-      group: users
+      owner: "{{ username }}"
+      group: "users"
       recurse: yes
