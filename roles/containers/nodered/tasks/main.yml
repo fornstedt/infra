@@ -1,0 +1,18 @@
+---
+- import_tasks: ../tasks/persistant-data.yml
+
+- name: Make sure the {{ container_name }} container is created and running
+  docker_container:
+    name: "{{ container_name }}"
+    image: "nodered/node-red:latest"
+    pull: yes
+    state: 'started'
+    env:
+      "TZ": "{{ timezone }}"
+    ports:
+      - "1880:1880"
+    volumes:
+      - "{{ docker_dir }}/{{ container_name }}:/data"
+    restart_policy: unless-stopped
+
+# backup is handled bu influxdb cron job.

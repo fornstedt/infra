@@ -6,3 +6,4 @@ selected_containers:
   - influxdb
   - mosquitto
   - homeassistant
+  - nodered
