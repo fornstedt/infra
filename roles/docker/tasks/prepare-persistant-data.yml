@@ -10,8 +10,8 @@
     file:
       dest: "{{ docker_dir }}"
       state: directory
-      owner: "{{ username }}"
-      group: "{{ username }}"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
       recurse: yes
     when: not persistent_data.stat.exists
 
@@ -19,6 +19,6 @@
     file:
       dest: "{{ docker_dir }}"
       state: directory
-      owner: "{{ username }}"
-      group: "docker"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
       recurse: yes

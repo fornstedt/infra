@@ -5,8 +5,8 @@
   file:
     path: "{{ item2 }}"
     state: directory
-    owner: "{{ username }}"
-    group: "users"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     recurse: yes
   loop_control:
     loop_var: item2
