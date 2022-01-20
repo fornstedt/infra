@@ -1,0 +1,4 @@
+---
+- name: Not implemented
+  fail:
+    msg: Not supported yet for Debian. Use ArchLinux for PiHole container

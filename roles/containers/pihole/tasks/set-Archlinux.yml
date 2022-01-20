@@ -1,0 +1,6 @@
+---
+- name: Set external name server for {{ inventory_hostname }} to "{{ external_name_servers }}"
+  ansible.builtin.lineinfile:
+    path: /etc/dhcpcd.conf
+    search_string: 'static domain_name_server'
+    line: "static domain_name_servers={{ external_name_servers }}"

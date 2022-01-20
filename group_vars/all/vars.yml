@@ -33,6 +33,9 @@ sudo_group: sudo
 
 guid: "1000"
 
+# Used for host running PiHole
+external_name_servers: 8.8.8.8 8.8.4.4
+
 #
 # Mount settings
 #

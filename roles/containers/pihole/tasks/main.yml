@@ -1,4 +1,5 @@
 ---
+- include_tasks: "set-{{ ansible_os_family }}.yml"
 - import_tasks: ../tasks/persistant-data.yml
 
 - name: Create the configuration directory
