@@ -14,11 +14,28 @@
       tags:
         - docker
 
-  tasks:
-    - name: Install containers
-      include_role:
-        name: containers/{{ item }}
-        apply:
-          tags: containers
-      tags: containers
-      with_items: "{{ selected_containers }}"
+# Containers
+
+    - role: containers/pihole
+      tags: [ containers, pihole ]
+      when: "'pihole' in selected_containers"
+
+    - role: containers/mosquitto
+      tags: [ containers, mosquitto ]
+      when: "'mosquitto' in selected_containers"
+
+    - role: containers/influxdb
+      tags: [ containers, influxdb ]
+      when: "'influxdb in' selected_containers"
+
+    - role: containers/homeassistant
+      tags: [ containers, homeassistant ]
+      when: "'homeassistant' in selected_containers"
+
+    - role: containers/nodered
+      tags: [ containers, nodered ]
+      when: "'nodered' in selected_containers"
+
+    - role: containers/grafana
+      tags: [ containers, grafana ]
+      when: "'grafana'in selected_containers"
