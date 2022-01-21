@@ -39,3 +39,7 @@
     - role: containers/grafana
       tags: [ containers, grafana ]
       when: "'grafana'in selected_containers"
+
+    - role: containers/telegraf
+      tags: [ containers, telegraf ]
+      when: "'telegraf'in selected_containers"

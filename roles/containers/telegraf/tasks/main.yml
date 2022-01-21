@@ -1,0 +1,24 @@
+---
+- import_tasks: ../tasks/persistant-data.yml
+
+- name: Copy influxdb settings to remote host
+  template:
+    src: telegraf.conf.j2
+    dest: "{{ docker_dir }}/{{ container_name }}/telegraf.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0774
+
+- name: Make sure the {{ container_name }} container is created and running
+  docker_container:
+    name: "{{ container_name }}"
+    image: "telegraf"
+    pull: yes
+    state: 'started'
+    user: "{{ guid }}"
+    groups: "{{ guid }}"
+    env:
+      "TZ": "{{ timezone }}"
+    volumes:
+      - "{{ docker_dir }}/{{ container_name }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+    restart_policy: unless-stopped
