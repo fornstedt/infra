@@ -7,3 +7,4 @@ selected_containers:
   - mosquitto
   - homeassistant
   - nodered
+  - grafana
