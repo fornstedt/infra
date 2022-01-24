@@ -26,7 +26,7 @@
 
     - role: containers/influxdb
       tags: [ containers, influxdb ]
-      when: "'influxdb in' selected_containers"
+      when: "'influxdb' in selected_containers"
 
     - role: containers/homeassistant
       tags: [ containers, homeassistant ]
