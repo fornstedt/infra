@@ -16,7 +16,6 @@
     when: not local_persistent_data.stat.exists
 
   - name: Check if the persistent data folder ({{ docker_dir }}/{{ container_name }}) is empty
-    when: local_persistent_data.stat.exists
     find:
       paths:
         - "{{ docker_dir }}/{{ container_name }}/"
