@@ -1,0 +1,10 @@
+---
+- name: Check if the persistent data folder exists on the remote machine
+  stat:
+    path: "{{ docker_mount }}"
+  register: persistent_data
+
+- name: Create the persistent data folder on the remote machine
+  fail:
+    msg: "{{ docker_mount }} must be mounted into the LXC container. Use command 'sudo lxc config device add <name> dockerdata disk source=/mnt/docker path=/mnt/docker'"
+  when: not persistent_data.stat.exists
