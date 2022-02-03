@@ -1,0 +1,6 @@
+#
+# Container settings
+#
+
+selected_containers:
+  - pihole

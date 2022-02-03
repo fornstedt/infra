@@ -1,4 +1,5 @@
 ---
 - name: Not implemented
   fail:
-    msg: Not supported yet for Debian. Use ArchLinux for PiHole container
+    msg: Make sure to set static name servers for {{ inventory_hostname }} to avoid conflict with PiHole.
+  ignore_errors: yes
