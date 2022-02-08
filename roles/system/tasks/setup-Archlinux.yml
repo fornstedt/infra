@@ -6,6 +6,7 @@
     owner: root
     group: users
     mode: '0774'
+  when: "'lxc' not in ansible_virtualization_type"
 
 - name: Update and upgrade apt packages
   when: ansible_os_family == 'Archlinux'
@@ -17,8 +18,9 @@
   command: /usr/local/sbin/check-reboot.sh
   register: reboot_required
   changed_when: '"Reboot required" in reboot_required.stdout_lines'
+  when: "'lxc' not in ansible_virtualization_type"
 
 - name: Reboot if required
   reboot:
     msg: Rebooting due to a kernel update
-  when: '"Reboot required" in reboot_required.stdout_lines'
+  when: "'lxc' not in ansible_virtualization_type and 'Reboot required' in reboot_required.stdout_lines"
