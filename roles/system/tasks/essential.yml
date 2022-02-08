@@ -25,6 +25,11 @@
     group: root
     mode: '0644'
 
+- name: Ensure group 'sudo' exists
+  group:
+    name: "{{ sudo_group }}"
+    state: present
+
 - name: Allow 'sudo' group to have passwordless sudo
   become: yes
   lineinfile:
