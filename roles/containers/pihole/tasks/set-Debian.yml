@@ -1,5 +1,33 @@
 ---
-- name: Not implemented
-  fail:
-    msg: Make sure to set static name servers for {{ inventory_hostname }} to avoid conflict with PiHole.
-  ignore_errors: yes
+  - name: Disable DNSStubListener
+    lineinfile:
+      dest: /etc/systemd/resolved.conf
+      regexp: "^#(.*)DNSStubListener=yes"
+      line: "DNSStubListener=no"
+
+  - name: Link /etc/resolve.conf to /run/systemd/resolve/resolv.conf
+    file:
+      src: /run/systemd/resolve/resolv.conf
+      dest: /etc/resolv.conf
+      state: link
+      force: yes
+
+  - name: Read Netplan config
+    shell:
+      cmd: cat /etc/netplan/50-cloud-init.yaml
+    register: netplan_config_content
+    changed_when: false
+
+  - name: Extract Ethernet name
+    set_fact:
+      eth_name: "{{ netplan_config_content.stdout | regex_search('ethernets:\\s*(.+):', '\\1') | first }}"
+
+  - name: Install new Netplan config
+    template:
+      src: 50-cloud-init.yaml.j2
+      dest: /etc/netplan/50-cloud-init.yaml
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+      - Apply netplan changes

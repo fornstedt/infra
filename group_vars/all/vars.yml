@@ -45,7 +45,7 @@ nsf_docker:   "{{ nfs_raid_path }}/docker"
 docker_mount: "/mnt/docker"
 
 nfs_mounts:
-- {  dest: "{{ docker_mount }}", src: "{{ nfs_server }}:{{ nsf_docker }}" }
+- { dest: "{{ docker_mount }}", src: "{{ nfs_server }}:{{ nsf_docker }}" }
 
 #
 # Copy the following lines to secret.yml and encrypt
