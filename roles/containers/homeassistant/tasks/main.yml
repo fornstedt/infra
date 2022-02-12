@@ -14,4 +14,4 @@
       - "{{ docker_dir }}/{{ container_name }}:/config"
     restart_policy: unless-stopped
 
-# backup is handled bu influxdb cron job.
+# backup is handled by influxdb cron job.

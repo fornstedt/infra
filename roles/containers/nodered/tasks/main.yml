@@ -15,4 +15,10 @@
       - "{{ docker_dir }}/{{ container_name }}:/data"
     restart_policy: unless-stopped
 
-# backup is handled bu influxdb cron job.
+- name: Create a cron backup job for {{ container_name }}
+  ansible.builtin.cron:
+    name: "container backup {{ container_name }}"
+    minute: "15"
+    hour: "3"
+    weekday: "6"
+    job: "$CONTAINER_BACKUP {{ container_name }} > /var/log/cb_{{ container_name }}_`date +$DATE_FORMAT`.log"
