@@ -10,6 +10,7 @@ do
     echo
     echo "Syncronize files: {{ docker_dir }}/$container/ -> {{ docker_mount }}/data/$container"
     sudo rsync -avz {{ docker_dir }}/$container/ {{ docker_mount }}/data/$container
+    sudo chmod -R a+rwX {{ docker_mount }}/data/$container
 done
 
 echo
