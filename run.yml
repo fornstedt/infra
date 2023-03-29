@@ -6,6 +6,10 @@
       tags:
         - system
 
+- hosts: all, !dun
+  become: yes
+
+  roles:
     - role: filesystems
       tags:
         - filesystems
@@ -15,10 +19,6 @@
         - docker
 
 # Containers
-
-    - role: containers/pihole
-      tags: [ containers, pihole ]
-      when: "'pihole' in selected_containers"
 
     - role: containers/mosquitto
       tags: [ containers, mosquitto ]

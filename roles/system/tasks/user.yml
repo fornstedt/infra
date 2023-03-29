@@ -23,6 +23,12 @@
     state: present
     key: "{{ ssh_public_key }}"
 
+- name: Set git safe Directory
+  git_config:
+    scope: global
+    name: safe.directory
+    value: /home/{{ username }}/.dotfiles
+
 - name: Clone the latest dotfiles repo
   git:
     repo: "{{ dotfiles_repo }}"

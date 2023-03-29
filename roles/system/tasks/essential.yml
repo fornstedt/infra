@@ -9,7 +9,7 @@
 
 - name: Install extra packages
   package:
-    name: "{{ extra_packages + arch_packages }}"
+    name: "{{ extra_packages + arch_packages + host_packages }}"
     state: present
 
 - name: Set the hostname

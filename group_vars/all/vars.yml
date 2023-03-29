@@ -27,6 +27,8 @@ ansible_python_interpreter: /usr/bin/python3
 
 sudo_group: sudo
 
+host_packages: []
+
 #
 # Container settings
 #

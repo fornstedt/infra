@@ -14,6 +14,12 @@
     volumes:
       - "{{ docker_dir }}/{{ container_name }}:/data"
     restart_policy: unless-stopped
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:1880/settings"]
+        interval: 60s
+        timeout: 10s
+        retries: 15
+        start_period: 30s
 
 - name: Create a cron backup job for {{ container_name }}
   ansible.builtin.cron:

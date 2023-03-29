@@ -3,4 +3,4 @@
 #
 
 selected_containers:
-  - pihole
+  - mosquitto

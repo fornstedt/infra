@@ -3,4 +3,5 @@
 #
 
 selected_containers:
-  - pihole
+  - nodered
+  - grafana
