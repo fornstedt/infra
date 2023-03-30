@@ -33,6 +33,10 @@
       - "{{ docker_dir }}/{{ container_name }}/etc/influxdb2:/etc/influxdb2"
       - "{{ docker_dir }}/{{ container_name }}/var/lib/influxdb2:/var/lib/influxdb2"
     restart_policy: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:8086/ping"]
+      interval: 10s
+      retries: 30
 
 - name: Create a cron backup job for {{ container_name }}
   ansible.builtin.cron:
