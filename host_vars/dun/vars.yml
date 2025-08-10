@@ -10,7 +10,7 @@ host_packages:
   - python3-certbot-apache
   - screen
 
-  # Pyenv packange dependencies
+  # Pyenv package dependencies
   - make
   - build-essential
   - libssl-dev

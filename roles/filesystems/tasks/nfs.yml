@@ -8,7 +8,7 @@
     state: present
 
 - name: Mount NFS shares
-  become: yes
+  become: true
   mount:
     fstype: nfs
     opts: defaults
