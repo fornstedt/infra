@@ -5,3 +5,4 @@
 selected_containers:
   - nodered
   - grafana
+  - homeassistant

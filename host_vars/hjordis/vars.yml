@@ -1,7 +1,0 @@
-#
-# Container settings
-#
-
-selected_containers:
-  - influxdb
-  - homeassistant
