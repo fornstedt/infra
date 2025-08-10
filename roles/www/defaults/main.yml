@@ -1,0 +1,11 @@
+---
+extra_packages:
+  - apache2
+  - certbot
+  - python3-certbot-apache
+
+websites:
+  - biskopshonung.se
+  - fornstedt.eu
+
+www_repo: git@github.com:fornstedt/home_websites.git

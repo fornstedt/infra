@@ -1,0 +1,60 @@
+---
+- name: Install extra packages
+  package:
+    name: "{{ extra_packages }}"
+    state: present
+
+- name: Enable rewrite_mod
+  become: yes
+  shell: /usr/sbin/a2enmod rewrite
+  register: rewrite_result
+  changed_when: "'Module rewrite already enabled' not in rewrite_result.stdout"
+  notify: Reload Apache
+
+- name: Create document root
+  file:
+    path: "/var/www"
+    state: directory
+    owner: root
+    mode: '0755'
+
+- name: Clone the www repo
+  git:
+    repo: "{{ www_repo }}"
+    dest: /home/{{ username }}/www
+    key_file: /home/{{ username }}/.ssh/id_rsa
+    accept_hostkey: yes
+    version: master
+
+- name: Create symbolic link to websites
+  become: yes
+  ansible.builtin.file:
+    src: /home/{{ username }}/www/{{ item }}
+    dest: /var/www/{{ item }}
+    owner: root
+    state: link
+  with_items: "{{ websites }}"
+
+- name: Create symbolic links to website configurations
+  become: yes
+  ansible.builtin.file:
+    src: /home/{{ username }}/www/sites-available/{{ item }}.conf
+    dest: /etc/apache2/sites-available/{{ item }}.conf
+    owner: root
+    state: link
+  with_items: "{{ websites }}"
+
+- name: Enable websites
+  become: yes
+  shell: /usr/sbin/a2ensite {{ item }}.conf
+  register: website_enable_result
+  changed_when: "'already enabled' not in website_enable_result.stdout"
+  notify: Reload Apache
+  with_items: "{{ websites }}"
+
+- name: Disable default Apache website
+  become: yes
+  shell: /usr/sbin/a2dissite 000-default.conf
+  register: default_disable_result
+  changed_when: "'Site 000-default already disabled' not in default_disable_result.stdout"
+  notify: Reload Apache

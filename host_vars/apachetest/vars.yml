@@ -1,0 +1,8 @@
+#
+# Container settings
+#
+
+selected_containers: []
+
+host_packages:
+  - screen
